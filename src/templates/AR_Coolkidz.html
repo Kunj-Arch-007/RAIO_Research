@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stone Timing</title>
+  <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+  <link rel="stylesheet" href="{% static 'After_AR_Interface_Page.css' %}">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>AR CoolKidz Processes</h1>
+    </div>
+    <div class="buttons">
+      <button class="button" onclick="handleCMCClick()">Process Of AR</button>
+      <button class="button" onclick="handleCoolKidzClick()">Process Of EPD</button>
+      <button class="button" onclick="handleReturnClick()">Return</button>
+    </div>
+  </div>
+
+  <script>
+    function navigateTo(path) {
+      console.log("Navigating to " + path);
+      window.location.href = path;
+    }
+  
+    function handleReturnClick() {
+      navigateTo('/AR_Clients');
+    }
+  
+    function handleCMCClick() {
+      navigateTo('/AR_Clients/Coolkidz/AR_Process');
+    }
+  
+    function handleCoolKidzClick() {
+      navigateTo('/AR_Clients/Coolkidz/EPD_Process');
+    }
+  </script>
+</body>
+</html>

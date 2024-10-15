@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Evening Counts</title>
+  <link rel="stylesheet" href="/static/StoneChargeCounts_UploadPage_Design.css">
+</head>
+
+<body>
+  <div class="main">
+    <header>
+      <h1>Upload Charge Counts File</h1>
+    </header>
+    <form class="myform" id="uploadForm" enctype="multipart/form-data" method="POST">
+      {% csrf_token %}
+      <div class="file-input-wrapper">
+        <label for="fileInput" class="file-label">
+          <i class="fas fa-upload"></i> <b>Choose a Charge Counts RAW file</b>
+        </label>
+        <input type="file" id="fileInput" name="excelFile" class="file-input" accept=".xls,.xlsx,.csv" required />
+      </div>
+      <div class="button-group">
+        <button type="button" class="btn btn-primary" onclick="handleGenerateFile('cmc')">
+          <i class="fas fa-file-export"></i> Generate Counts
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="goBack()">
+          <i class="fas fa-arrow-left"></i> Return
+        </button>
+      </div>
+    </form>
+
+    <div class="counts-display">
+      <h2>Evening Charges Counts</h2>
+      <ul id="eveningCountsDisplay">
+        <!-- evening counts will be displayed here -->
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    function handleGenerateFile(action) {
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
+      if (!file) {
+        alert('Please select a file.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('excelFile', file);
+      formData.append('action', action);  // Include action in the form data
+
+      fetch('/generate-file-ChargesCounts', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json(); // Assuming the server returns a JSON response
+        })
+        .then(data => {
+          // Display the evening counts on the UI
+          displayeveningCounts(data.eveningCounts);
+        })
+        .catch(error => {
+          console.error('Error generating file:', error);
+          alert('Error generating file. Please try again.');
+        });
+    }
+
+    function displayeveningCounts(eveningCounts) {
+      const eveningCountsDiv = document.getElementById('eveningCountsDisplay');
+
+      // Clear previous counts
+      eveningCountsDiv.innerHTML = '';
+
+      // Display evening counts
+      if (Object.keys(eveningCounts).length > 0) {
+        for (const [key, value] of Object.entries(eveningCounts)) {
+          eveningCountsDiv.innerHTML += `<li>${key}: ${value}</li>`;
+        }
+      } else {
+        eveningCountsDiv.innerHTML = '<li>No evening counts available.</li>';
+      }
+    }
+
+    function goBack() {
+      window.history.back(); // Navigate to the previous page
+    }
+  </script>
+</body>
+
+</html>
